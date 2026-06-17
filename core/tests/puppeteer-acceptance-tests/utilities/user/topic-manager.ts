@@ -880,8 +880,12 @@ export class TopicManager extends BaseUser {
 
     await this.clickOnElementWithSelector(defaultFeedbackTab);
     await this.clickOnElementWithSelector(openOutcomeFeedBackEditor);
+    await this.page.waitForSelector(richTextAreaField, {visible: true});
     await this.clickOnElementWithSelector(richTextAreaField);
     await this.typeInInputField(richTextAreaField, 'The answer is 3');
+    await this.page.waitForSelector(
+      `${saveOutcomeFeedbackButton}:not([disabled])`
+    );
     await this.clickOnElementWithSelector(saveOutcomeFeedbackButton);
 
     await this.clickOnElementWithSelector(addHintButton);
@@ -920,6 +924,7 @@ export class TopicManager extends BaseUser {
    * Clicks on "Save" button in the question editor.
    */
   async saveQuestion(): Promise<void> {
+    await this.page.waitForSelector(`${saveQuestionButton}:not([disabled])`);
     await this.clickOnElementWithSelector(saveQuestionButton);
     await this.expectElementToBeVisible(saveQuestionButton, false);
   }

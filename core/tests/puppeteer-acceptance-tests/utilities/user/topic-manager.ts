@@ -838,27 +838,16 @@ export class TopicManager extends BaseUser {
 
   /**
    * Create a basic algebra question in the skill editor page.
-   * showMessage calls added after every phase to identify
-   * which phase leaves the form in an invalid state.
    */
   async addBasicAlgebraQuestionToSkill(skillName: string): Promise<void> {
-    // ── PHASE 1 ── Open skill editor and create question ──────────────────
     await this.openSkillEditor(skillName);
     await this.clickOnElementWithSelector(createQuestionButton);
-    showMessage('Phase 1 DONE: skill editor opened, create question clicked');
-
-    // ── PHASE 2 ── Enter question text ────────────────────────────────────
     await this.clickOnElementWithSelector(textStateEditSelector);
     await this.page.waitForSelector(richTextAreaField, {visible: true});
-    // no extra click needed here — textStateEditSelector already gave focus
     await this.typeInInputField(richTextAreaField, 'Add 1+2');
     await this.page.waitForSelector(`${saveContentButton}:not([disabled])`);
     await this.clickOnElementWithSelector(saveContentButton);
-    showMessage(
-      'Phase 2 DONE: question text "Add 1+2" typed and content saved'
-    );
 
-    // ── PHASE 3 ── Add Number Input interaction ───────────────────────────
     await this.clickOnElementWithSelector(addInteractionButton);
     await this.page.waitForSelector(interactionNumberInputButton, {
       visible: true,
@@ -876,11 +865,9 @@ export class TopicManager extends BaseUser {
         throw new Error('Cannot find number input interaction option.');
       }
     }, interactionNameDiv);
+
     await this.waitForElementToStabilize(saveInteractionButton);
     await this.clickOnElementWithSelector(saveInteractionButton);
-    showMessage('Phase 3 DONE: Number Input interaction selected and saved');
-
-    // ── PHASE 4 ── Add response (answer = 3, feedback = "Good job!") ──────
     await this.expectModalTitleToBe('Add Response');
     await this.clickOnElementWithSelector(responseRuleDropdown);
     await this.clickOnElementWithText(equalsRuleButtonText);
@@ -890,29 +877,19 @@ export class TopicManager extends BaseUser {
     await this.typeInInputField(richTextAreaField, 'Good job!');
     await this.clickOnElementWithSelector(saveResponseButton);
     await this.page.waitForSelector(modalDiv, {hidden: true});
-    showMessage(
-      'Phase 4 DONE: response rule set to equals 3, feedback "Good job!" saved, modal closed'
-    );
 
-    // ── PHASE 5 ── Add default feedback ───────────────────────────────────
     await this.clickOnElementWithSelector(defaultFeedbackTab);
     await this.clickOnElementWithSelector(openOutcomeFeedBackEditor);
     await this.clickOnElementWithSelector(richTextAreaField);
     await this.typeInInputField(richTextAreaField, 'The answer is 3');
     await this.clickOnElementWithSelector(saveOutcomeFeedbackButton);
-    showMessage(
-      'Phase 5 DONE: default feedback "The answer is 3" typed and saved'
-    );
 
-    // ── PHASE 6 ── Add hint ────────────────────────────────────────────────
     await this.clickOnElementWithSelector(addHintButton);
     await this.page.waitForSelector(modalDiv, {visible: true});
     await this.typeInInputField(richTextAreaField, '3');
     await this.clickOnElementWithSelector(saveHintButton);
     await this.page.waitForSelector(modalDiv, {hidden: true});
-    showMessage('Phase 6 DONE: hint "3" added and modal closed');
 
-    // ── PHASE 7 ── Add solution ────────────────────────────────────────────
     await this.clickOnElementWithSelector(addSolutionButton);
     await this.page.waitForSelector(modalDiv, {visible: true});
     await this.page.waitForSelector(answerTypeDropdown);
@@ -925,24 +902,13 @@ export class TopicManager extends BaseUser {
     await this.page.waitForSelector(`${submitSolutionButton}:not([disabled])`);
     await this.clickOnElementWithSelector(submitSolutionButton);
     await this.page.waitForSelector(modalDiv, {hidden: true});
-    showMessage(
-      'Phase 7 DONE: solution set to 3 with explanation "1+2 is 3", modal closed'
-    );
 
-    // ── PHASE 8 ── Save the question ──────────────────────────────────────
-    // All phases done — form should be valid, save button should be enabled.
-    // If the test times out here, one of phases 1-7 left form in invalid state.
-    // Check the last showMessage printed to identify which phase failed.
-    showMessage(
-      'Phase 8 STARTING: about to wait for save button to be enabled'
-    );
-    await this.page.waitForSelector(`${saveQuestionButton}:not([disabled])`);
-    showMessage('Phase 8: save button is enabled, clicking now');
     await this.clickOnElementWithSelector(saveQuestionButton);
+
     await this.waitForNetworkIdle();
     await this.page.waitForSelector(modalDiv, {hidden: true});
-    showMessage('Phase 8 DONE: question saved successfully');
   }
+
   /**
    * Checks if the save question button is enabled.
    */
@@ -954,12 +920,10 @@ export class TopicManager extends BaseUser {
    * Clicks on "Save" button in the question editor.
    */
   async saveQuestion(): Promise<void> {
-    await this.page.waitForSelector(`${saveQuestionButton}:not([disabled])`);
     await this.clickOnElementWithSelector(saveQuestionButton);
     await this.expectElementToBeVisible(saveQuestionButton, false);
   }
 
-  /**
   /**
    * Save a topic draft.
    * @param {string} topicName - name of the topic to be saved.

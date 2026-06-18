@@ -508,7 +508,7 @@ export class BaseUser {
     showMessage(`Checking if element ${elementDesc} is clickable...`);
     const element =
       typeof selector === 'string'
-        ? await this.page.waitForSelector(selector, {
+        ? await this.page.waitForSelector(`${selector}:not([disabled])`, {
             timeout: timeout,
             visible: true,
           })

@@ -954,7 +954,7 @@ export class TopicManager extends BaseUser {
    * Clicks on "Save" button in the question editor.
    */
   async saveQuestion(): Promise<void> {
-    await this.page.waitForSelector(`${submitSolutionButton}:not([disabled])`);
+    await this.page.waitForSelector(`${saveQuestionButton}:not([disabled])`);
     await this.clickOnElementWithSelector(saveQuestionButton);
     await this.expectElementToBeVisible(saveQuestionButton, false);
   }

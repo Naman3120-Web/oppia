@@ -508,7 +508,7 @@ export class BaseUser {
     showMessage(`Checking if element ${elementDesc} is clickable...`);
     const element =
       typeof selector === 'string'
-        ? await this.page.waitForSelector(`${selector}:not([disabled])`, {
+        ? await this.page.waitForSelector(selector, {
             timeout: timeout,
             visible: true,
           })
@@ -668,7 +668,10 @@ export class BaseUser {
     elementPlace?: number
   ): Promise<void> {
     const context = parentElement ?? this.page;
-    let element = await context.waitForSelector(selector, {timeout: 30000});
+    let element = await context.waitForSelector(`${selector}:not([disabled])`, {
+      timeout: 30000,
+      visible: true,
+    });
 
     // Get nth element if elementPlace is given.
     if (elementPlace) {

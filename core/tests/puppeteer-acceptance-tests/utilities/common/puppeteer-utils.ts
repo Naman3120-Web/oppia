@@ -668,11 +668,19 @@ export class BaseUser {
     elementPlace?: number
   ): Promise<void> {
     const context = parentElement ?? this.page;
-    let element = await context.waitForSelector(`${selector}:not([disabled])`, {
+    let element = await context.waitForSelector(selector, {
       timeout: 30000,
-      visible: true,
     });
-
+    // If element is button or input wait for it to be truly enabled and visble
+    if (element) {
+      const tagName = await element.evaluate(el => el.tagName.toLowerCase());
+      if (tagName === 'button' || tagName === 'input') {
+        element = await context.waitForSelector(`${selector}:not([disabled])`, {
+          timeout: 30000,
+          visible: true,
+        });
+      }
+    }
     // Get nth element if elementPlace is given.
     if (elementPlace) {
       const elements = await context.$$(selector);

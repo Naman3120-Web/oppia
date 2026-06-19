@@ -887,7 +887,7 @@ export class BaseUser {
   ): Promise<void> {
     let element =
       typeof selector === 'string'
-        ? await this.page.waitForSelector(selector)
+        ? await this.page.waitForSelector(selector, {visible: true})
         : selector;
     if (!element) {
       throw new Error(`Element not found for selector: ${selector}`);
@@ -896,6 +896,7 @@ export class BaseUser {
     await this.waitForElementToBeClickable(element);
     await this.waitForElementToStabilize(selector);
 
+    await element.click();
     await element.type(text);
   }
 

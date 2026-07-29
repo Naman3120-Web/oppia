@@ -876,10 +876,10 @@ export class BaseUser {
     if (!element) {
       throw new Error(`Element not found for selector: ${selector}`);
     }
-    await this.waitForElementToStabilize(element);
     await this.waitForElementToBeClickable(element);
     await this.waitForElementToStabilize(selector);
 
+    await element.click();
     await element.type(text);
   }
 
